@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script>
+        function loc(place){
+            window.location.href = place
+        }
+
+
+        function handleResize() {
+            if (window.innerWidth < 1140 || window.innerHeight < 690) {
+                document.querySelector('.Q').style.display = 'none';
+            } else {
+                document.querySelector('.Q').style.display = 'grid';
+            }
+        }
+        
+        window.addEventListener('load', handleResize);
+        
+        window.addEventListener('resize', handleResize);
+        
+    </script>
+    <link rel="stylesheet" href="../static/styles.css" />
+    <style>
+        .Q {
+            display: grid;
+        }
+        @media screen and (max-width: 1139px), (max-height: 689px) {
+            .Q {
+                display: none;
+            }
+        }
+        .T_I {
+            color: red;
+        }
+        
+        .T_I:hover {
+            color: rgb(180, 0, 0);
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+    <script src="https://unpkg.com/vue@3.2.36/dist/vue.global.prod.js"></script>
+</head>
+<body style="background-color: rgba(21, 21, 21, 0.86); ">
+    {% load filter %}
+    <div>
+    <div style="border: 2px solid rgba(25, 24, 24, 0.797); height: 10vh; background-color:rgba(32, 31, 31, 0.79); margin-bottom: 10vh; align-items: center; display: flex; justify-content: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 70vw; font-size: 30px; color:rgba(224, 224, 224, 0.657);">
+            <div>
+                <h4 style="cursor: pointer;" onclick="loc('/')">Home</h4>
+            </div>
+            <div>
+                <h4 style="cursor: pointer;" onclick="loc('/messages')">Messages</h4>
+            </div>
+            <div>
+                <h4 style="cursor: pointer;" onclick="loc('/create')">Create</h4>
+            </div>
+            <div>
+                <h4 style="cursor: pointer;" onclick="loc('/logout')">Logout</h4>
+            </div>
+        </div>
+    </div>
+    <div class="Q" style="display: grid; justify-content: right;text-align: center;padding-right: 16vw;width: 30%;float: right;position: fixed;margin-left: 700px;margin-bottom: 50px;">            <form action="/create" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <h1 style="color:rgba(224, 224, 224, 0.657)">Quick post</h1>
+                <div>
+                    <input name="title" type="text" placeholder="Title" style="padding: 10px 10px 10px 10px; font-size: 20px; letter-spacing: 0.5px; background-color: rgba(24, 24, 24, 0.919); border: 0px; border-radius: 5px; color:rgba(186, 186, 186, 0.821)"/>
+                </div>
+                <div>
+                    <textarea name="content" style="width: 266.7px; border: 0px; border-radius: 5px; margin-top: 35px; color:rgba(186, 186, 186, 0.821); background-color: rgba(24, 24, 24, 0.919); font-size: 15px; letter-spacing: 0.5px; height: 180px; resize: none;" placeholder="Conetnt"></textarea>
+                </div>
+                <div>
+                    <input type="file" value="Upload" style="margin-top: 35px; padding: 10px 10px 10px 10px; background-color: rgba(22, 22, 22, 0.879); border: 1px solid rgba(8, 8, 8, 0.905); color:rgba(186, 186, 186, 0.821);" name="file" />
+                </div>
+                <div style="text-align: left;">
+                    <button type="submit" class="LoginButton" style="border: 2px; height: 70px; width: 70px; font-size: 20px; border-radius: 12px; margin-top: 35px;">Create</button>
+                </div>
+            </form>    
+        </div>
+        <div id="Posts" style="display: grid; text-align: center; align-items: center; justify-content: left; padding-left: 200px;">
+        <div v-for="post in posts" v-bind:key="post.id">
+            <div style="border: 0.2px solid rgba(0, 0, 0, 0.445); margin-bottom: 20px; height: auto; width: 400px; margin-left: 20px;  background-color: rgba(211, 224, 223, 0.743);">
+                <div style="width: calc(100% - 20px); margin: 0 auto;">
+                    <div v-if="post.i_a" style="border-bottom: 0.1px solid gray; height: 15px; padding-bottom: 10px;">
+                            <p style="color: rgba(0, 145, 255, 0.862); margin-right: 10px;"><span style="font-size: 18px;">[[post.author_username]]</span> <span style="margin-left: 15px; font-size: 14px; color: rgba(15, 15, 15, 0.908);">[[post.date_posted]].</span><a :href="'/delete/'+post.id"><span><i class="fa T_I" style="margin-left: 15px; font-size: 25px; cursor: pointer;" class="fa">&#xf014;</i></a></span></p>
+                    </div>
+                    <div v-if="post.ina" style="border-bottom: 0.1px solid gray; height: 15px; padding-bottom: 6px;">
+                        <p style="color: rgba(0, 145, 255, 0.862); margin-right: 10px;"><span style="font-size: 18px;">[[post.author_username]]</span> <span style="margin-left: 15px; font-size: 14px; color: rgba(15, 15, 15, 0.908);">[[post.date_posted]].</span></p>
+                    </div>
+                    <div>
+                        <h1 style="padding-left: 5px; font-size: 25px; word-wrap: break-word;">[[post.title]]</h1>
+                        </span>
+                        <p style="word-wrap: break-word;">
+                            [[ post.content ]]
+                        </p>
+                    </div>
+                    <div v-if="post.is_image">
+                        <div v-if="post.i">
+                            <img style="max-width: 380px; max-height: 500px;" :src="post.post_image" />
+                        </div>
+                        <div>
+                            <video v-if="post.v" controls style="max-width: 380px; max-height: 500px;">
+                                <source style="max-width: 380px; max-height: 500px;" :src="post.post_image">
+                            </video>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    <script>
+        const L = {
+            data() {
+                return{
+                    posts: [],
+                    currentPage: 1,
+                    hasNext: true,
+                }
+            },
+            delimiters: ['[[', ']]'],
+            mounted() {
+                this.getPosts()
+
+                window.addEventListener('scroll', this.handleScroll);
+            },
+            methods: {
+                handleScroll() {
+                    if (
+                        document.documentElement.scrollHeight - window.innerHeight <=
+                        window.scrollY + 5 &&
+                        this.hasNext 
+                        ) {
+                        this.currentPage += 1;
+                        this.getPosts();
+                    }
+                },
+                getPosts() {
+                    fetch(`/get_posts/?page=${this.currentPage}`).then(response => {
+                        return response.json();
+                    }).then(data => {
+                        this.hasNext = false
+                        if(data.next) {
+                            this.hasNext = true
+                        }
+                        for (let i = 0; i < data.results.length; i++) {
+                            var d = new Date(data.results[i].date_posted);
+                            const options = {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                                hour: 'numeric',
+                                minute: 'numeric',
+                                hour12: true,
+                            };
+                            let v = false
+                            let image = false
+                            if (data.results[i].post_image.endsWith(".png") || data.results[i].post_image.endsWith(".jpg") || data.results[i].post_image.endsWith(".webp")) {
+                                image = true
+                            } else if (data.results[i].post_image.endsWith(".mp4") || data.results[i].post_image.endsWith(".mkv") || data.results[i].post_image.endsWith(".mpe") || data.results[i].post_image.endsWith(".mpeg") || data.results[i].post_image.endsWith(".mkv")) {
+                                v = true
+                            }
+                            this.posts.push({
+                                id: data.results[i].id,
+                                title: data.results[i].title,
+                                content: data.results[i].content,
+                                author_username: data.results[i].author_username,
+                                date_posted: d.toLocaleString('en-US', options),
+                                post_image: data.results[i].post_image,
+                                is_image: data.results[i].is_image,
+                                i: image,
+                                v: v,
+                                i_a: '{{user}}' == data.results[i].author_username,
+                                ina: '{{user}}' != data.results[i].author_username,
+                            })
+                        }
+                    }).catch(error => {
+                        console.log(error);
+                    });
+
+                }
+            }
+        }
+
+        Vue.createApp(L).mount('#Posts');
+    </script>
+</body>
+</html>

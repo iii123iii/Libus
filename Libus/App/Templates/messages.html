@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
+    <script>
+        function loc(place){
+            window.location.href = place;
+        }
+
+        const socket = io('http://localhost:3000', {
+            withCredentials: true,
+        });
+          
+        socket.emit('register', "{{user}}");
+
+        function sendMessage() {
+            if (document.getElementById("I").value.trim()) {
+                const toUserId = '{{username2}}'; 
+                const messageText = document.getElementById("I").value;
+    
+                const message = {
+                    to: toUserId,
+                    me: '{{user}}',
+                    text: messageText,
+                };
+    
+                socket.emit('message', message);
+                document.getElementById("I").value = "";
+            }
+        }
+
+        socket.on('message', (message) => {
+            if(message.d == true){
+                if (message.me == "{{user}}") {
+                    const messagesDiv = document.getElementById('m').innerHTML = `
+                    ${document.getElementById('m').innerHTML}
+                    <div class="message-container">
+                        <div class="message-box">
+                            <p class="message-text">${message.message}</p>
+                        </div>
+                    </div>
+                    `
+                }else {
+                    const messagesDiv = document.getElementById('m').innerHTML = `
+                    ${document.getElementById('m').innerHTML}
+                    <div class="message-container-green">
+                        <div class="message-box-green">
+                            <p class="message-text">${message.message}</p>
+                        </div>
+                    </div>
+                    `
+                }
+                }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('#f');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+                const formData = new FormData(event.target);
+                const url = event.target.action;
+                const options = {
+                    method: 'POST',
+                    body: formData,
+                };
+                try {
+                    const response = await fetch(url, options);
+                    if (response.ok) {
+                        sendMessage();
+                    } else {
+                    document.getElementById("I").value = "";
+                    console.error('Error submitting form:', response.statusText);
+                    }
+                } catch (error) {
+                    document.getElementById("I").value = "";
+                    console.error('Error submitting form:', error);
+                }
+            }
+        );
+    });
+    function osc(e){
+        console.log(e.target.value);  
+    }
+    window.addEventListener("DOMContentLoaded", (event) => {
+        document.querySelector(".S").addEventListener("change", osc);
+        document.querySelector(".S").addEventListener("keydown", osc);
+        document.querySelector(".S").addEventListener("paste", osc);
+        document.querySelector(".S").addEventListener("input", osc);
+    });
+    </script>
+    <style>
+        .message-container {
+            display: flex;
+            justify-content: flex-end; /* For right-aligned messages, change to 'flex-start' for left-aligned */
+            margin-top: 10vh;
+            margin-right: 2vw;
+        }
+
+        .message-container-green {
+            display: flex;
+            justify-content: flex-start; /* For right-aligned messages, change to 'flex-start' for left-aligned */
+            margin-top: 10vh;
+            margin-left: 2vw;
+        }
+
+        
+        .message-box {
+            max-width: 300px;
+            border: 1px solid #007aff;
+            background-color: #007aff;
+            border-radius: 25px;
+            padding: 8px;
+            display: inline-block;
+        }
+
+        .message-box-green {
+            max-width: 300px;
+            border: 1px solid #005c4b;
+            background-color: #005c4b;
+            border-radius: 25px;
+            padding: 8px;
+            display: inline-block;
+        }
+
+        
+        .message-text {
+            word-wrap: break-word;
+        }
+
+        .s::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        .s::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        
+        .s::-webkit-scrollbar-thumb {
+            background: #888888e4; 
+        }
+        
+        .s::-webkit-scrollbar-thumb:hover {
+            background: #555; 
+        }
+
+        .UsernameText {
+            font-size: 30px;
+            padding-left: 2vw;
+            cursor: pointer;
+        }
+
+        .S:focus{
+            outline-color: rgb(36, 36, 36);;
+            outline-style: solid;
+        }
+    </style>
+    <link rel="stylesheet" href="../static/styles.css" />
+</head>
+<body style="background-color: rgba(21, 21, 21, 0.86);">
+    <div style="border: 2px solid rgba(25, 24, 24, 0.797); height: 10vh; background-color:rgba(32, 31, 31, 0.79); margin-bottom: 10vh; align-items: center; display: flex; justify-content: center;">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 70vw; font-size: 30px; color:rgba(224, 224, 224, 0.657);">
+            <div>
+                <h4 style="cursor: pointer;" onclick="loc('/')">Home</h4>
+            </div>
+            <div>
+                <h4 style="cursor: pointer;" onclick="loc('/messages')">Messages</h4>
+            </div>
+            <div>
+                <h4 style="cursor: pointer;" onclick="loc('/create')">Create</h4>
+            </div>
+            <div>
+                <h4 style="cursor: pointer;" onclick="loc('/logout')">Logout</h4>
+            </div>
+        </div>
+    </div>
+    <div>
+
+    <div>
+        <div style="border: 1px solid black; float: left; height: 76.141689373297vh; width: 15vw;">
+            <div>
+                <div style="width: 15vw; display: grid; justify-content: center; height: 6vh; align-items: end;">
+                    <input placeholder="Search Users" class="S" style="width: 12.8vw; height: 4vh; border-radius: 6px; background-color: rgba(31, 31, 31, 0.861); color: rgba(196, 196, 196, 0.9); letter-spacing: 0.5px; border: 1.3px solid rgb(14, 14, 14); font-size: larger; padding-left: 0.5vw; padding-right: 0.5vw;" />
+                </div>
+                <p class="UsernameText" onclick="loc('/messages/{{user}}')">{{user}}</p>
+            </div>
+        </div>
+        <div style="border: 1px solid black; height: auto; display: grid;">
+            <div style="overflow-y: auto; height: 70vh; display: flex; flex-direction: column-reverse" class="s">
+                <div id="m">
+
+                </div>
+                {% if notUser == True %}
+                <div class="message-container">
+                    <div class="message-box">
+                        <p class="message-text">Nothing Here</p>
+                    </div>
+                </div>
+                {% else %}
+                {% for message in messages %}
+                {% if message.author == user %}
+                <div class="message-container">
+                    <div class="message-box">
+                        <p class="message-text">{{message.text}}</p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="message-container-green">
+                    <div class="message-box-green">
+                        <p class="message-text">{{message.text}}</p>
+                    </div>
+                </div>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+            </div>
+            
+            <div style="align-content: end; display: grid;">
+                <div style="display: grid; justify-content: center; align-content: end;">
+                    <div>
+                        {% if notUser == True %}
+                            <input id="I" type="input" placeholder="Type your message" name="message"  style="padding: 12px 12px 12px 12px; border-radius: 8px; letter-spacing: 0.5px; font-size: 20px; background-color: rgba(31, 31, 31, 0.861); border-color: rgba(0, 0, 0, 0); color: rgba(196, 196, 196, 0.9); visibility: hidden;"/>
+                            <button type="submit" class="LoginButton" style="border: 2px; height: 50px; width: 50px; font-size: 16px; border-radius: 12px; margin-bottom: 4px; visibility: hidden;">Send</button>
+                            {% else %}
+                            <form id="f" action="/messages/{{username2}}" method="post" onsubmit="return false">
+                                {% csrf_token %}
+                                <input id="I" type="input" placeholder="Type your message" name="message"  style="padding: 12px 12px 12px 12px; border-radius: 8px; letter-spacing: 0.5px; font-size: 20px; background-color: rgba(31, 31, 31, 0.861); border-color: rgba(0, 0, 0, 0); color: rgba(196, 196, 196, 0.9);"/>
+                                <button type="submit" class="LoginButton" style="border: 2px; height: 50px; width: 50px; font-size: 16px; border-radius: 12px; margin-bottom: 4px;">Send</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

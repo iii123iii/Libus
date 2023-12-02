@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script>
+        function loc(place){
+            window.location.href = place
+        }
+    </script>
+    <link rel="stylesheet" href="../static/styles.css" />
+</head>
+<body style="background-color: rgba(21, 21, 21, 0.86);">
+    <div style="border: 2px solid rgba(25, 24, 24, 0.797); height: 10vh; background-color:rgba(32, 31, 31, 0.79); margin-bottom: 10vh; align-items: center; display: flex; justify-content: center;">
+            <div style="display: flex; justify-content: center; align-items: center; width: 40vw; font-size: 30px; color:rgba(224, 224, 224, 0.657)">
+                <div>
+                    <h4 style="cursor: pointer;" onclick="loc('/register')">Register</h4>
+                </div>
+            </div>
+    </div>
+    <div style="display: grid; justify-content: space-around; align-items: center; font-size: 30px; color: rgba(213, 213, 213, 0.799);">
+        <h1>Login</h1>
+    </div>
+    <form method="post" action="/login" style="display: grid; justify-content: space-around; padding-top: 100px;">
+        {% csrf_token %}
+        <div style="margin-bottom: 15px;">
+            <input placeholder="Username" name="username" style="padding: 12px 12px 12px 12px; border-radius: 8px; letter-spacing: 0.5px; font-size: x-large; background-color: rgba(31, 31, 31, 0.861); border-color: rgba(0, 0, 0, 0); color: rgba(196, 196, 196, 0.9);"/>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <input type="password" placeholder="Password" name="password"  style="padding: 12px 12px 12px 12px; border-radius: 8px; letter-spacing: 0.5px; font-size: x-large; background-color: rgba(31, 31, 31, 0.861); border-color: rgba(0, 0, 0, 0); color: rgba(196, 196, 196, 0.9);"/>
+        </div>
+        <div>
+            <button type="submit" class="LoginButton" style="border: 2px; height: 70px; width: 70px; font-size: 22px; border-radius: 12px;">Login</button>
+        </div>
+    </form>
+</body>
+</html>
