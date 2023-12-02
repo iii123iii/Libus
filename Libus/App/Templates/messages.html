@@ -81,12 +81,34 @@
             }
         );
     });
-    function osc(e){
-        console.log(e.target.value);  
+    async function osc(e){
+        try {
+            if (e.target.value.trim()) {
+                const response = await fetch(`/get_users/${e.target.value}`);
+                if (response.ok) {
+                    res = await response.json()
+                    let html = ``
+                    for(i in res) {
+                        html = `
+                        ${html}
+                        <p class="UsernameText" onclick="loc('/messages/${res[i].username}')">${res[i].username}</p>
+                        `
+                    }
+                    document.querySelector('#UsersContainer').innerHTML = html
+                } else {
+                    console.error('Error submitting form:', response.statusText);
+                }
+            }else {
+                document.querySelector('#UsersContainer').innerHTML = `
+                <p class="UsernameText" onclick="loc('/messages/{{user}}')">{{user}}</p>
+                `
+            }
+        } catch (error) {
+            console.error('Error submitting form:', error);
+        }
     }
     window.addEventListener("DOMContentLoaded", (event) => {
         document.querySelector(".S").addEventListener("change", osc);
-        document.querySelector(".S").addEventListener("keydown", osc);
         document.querySelector(".S").addEventListener("paste", osc);
         document.querySelector(".S").addEventListener("input", osc);
     });
@@ -97,6 +119,7 @@
             justify-content: flex-end; /* For right-aligned messages, change to 'flex-start' for left-aligned */
             margin-top: 10vh;
             margin-right: 2vw;
+            margin-bottom: 8px;
         }
 
         .message-container-green {
@@ -104,6 +127,7 @@
             justify-content: flex-start; /* For right-aligned messages, change to 'flex-start' for left-aligned */
             margin-top: 10vh;
             margin-left: 2vw;
+            margin-bottom: 8px;
         }
 
         
@@ -146,6 +170,22 @@
             background: #555; 
         }
 
+        .u::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        .u::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        
+        .u::-webkit-scrollbar-thumb {
+            background: #888888e4; 
+        }
+        
+        .u::-webkit-scrollbar-thumb:hover {
+            background: #555; 
+        }
+
         .UsernameText {
             font-size: 30px;
             padding-left: 2vw;
@@ -184,7 +224,9 @@
                 <div style="width: 15vw; display: grid; justify-content: center; height: 6vh; align-items: end;">
                     <input placeholder="Search Users" class="S" style="width: 12.8vw; height: 4vh; border-radius: 6px; background-color: rgba(31, 31, 31, 0.861); color: rgba(196, 196, 196, 0.9); letter-spacing: 0.5px; border: 1.3px solid rgb(14, 14, 14); font-size: larger; padding-left: 0.5vw; padding-right: 0.5vw;" />
                 </div>
-                <p class="UsernameText" onclick="loc('/messages/{{user}}')">{{user}}</p>
+                <div id="UsersContainer" style="overflow-y: auto; height: 70vh; display: flex; flex-direction: column" class="s">
+                    <p class="UsernameText" onclick="loc('/messages/{{user}}')">{{user}}</p>
+                </div>
             </div>
         </div>
         <div style="border: 1px solid black; height: auto; display: grid;">

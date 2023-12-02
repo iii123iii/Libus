@@ -125,3 +125,11 @@ def delete(request, id):
     if post.author.username == request.user.username:
         post.delete()
     return redirect('/')
+
+@api_view(['Get'])
+def get_users(request, username):
+    if(request.user.is_authenticated == False):
+        return redirect("/login")
+    users = User.objects.filter(Q(username__icontains=username))
+    user_list = [{"username": user.username} for user in users]
+    return HttpResponse(json.dumps(user_list), content_type="application/json")
