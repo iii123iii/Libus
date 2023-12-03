@@ -20,8 +20,8 @@ class Post(models.Model):
     
     
 class Messages(models.Model):
-    author = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="author")
-    user2 = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="user2")
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="author")
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user2", blank=True)
     text = models.CharField(max_length=500)
     timestamp = models.DateTimeField(default=timezone.now)
     

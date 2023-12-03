@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'App.apps.AppConfig',
     'corsheaders',
     'rest_framework',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 
@@ -97,9 +98,6 @@ DATABASES = {
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },

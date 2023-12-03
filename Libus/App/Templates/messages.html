@@ -83,8 +83,8 @@
     });
     async function osc(e){
         try {
-            if (e.target.value.trim()) {
-                const response = await fetch(`/get_users/${e.target.value}`);
+            if (document.querySelector(".S").value.trim()) {
+                const response = await fetch(`/get_users/${document.querySelector(".S").value}`);
                 if (response.ok) {
                     res = await response.json()
                     let html = ``
@@ -94,7 +94,7 @@
                         <p class="UsernameText" onclick="loc('/messages/${res[i].username}')">${res[i].username}</p>
                         `
                     }
-                    document.querySelector('#UsersContainer').innerHTML = html
+                    document.querySelector('#UsersContainer').innerHTML = html;
                 } else {
                     console.error('Error submitting form:', response.statusText);
                 }
@@ -107,10 +107,19 @@
             console.error('Error submitting form:', error);
         }
     }
+
+    function c() {
+        if (document.querySelector(".S").value.trim() == "") {
+            document.querySelector('#UsersContainer').innerHTML = `
+            <p class="UsernameText" onclick="loc('/messages/{{user}}')">{{user}}</p>
+            `
+        }
+    }
+    
     window.addEventListener("DOMContentLoaded", (event) => {
-        document.querySelector(".S").addEventListener("change", osc);
-        document.querySelector(".S").addEventListener("paste", osc);
-        document.querySelector(".S").addEventListener("input", osc);
+        document.querySelector(".S").addEventListener("change", c);
+        document.querySelector(".S").addEventListener("paste", c);
+        document.querySelector(".S").addEventListener("input", c);
     });
     </script>
     <style>
@@ -198,6 +207,7 @@
         }
     </style>
     <link rel="stylesheet" href="../static/styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body style="background-color: rgba(21, 21, 21, 0.86);">
     <div style="border: 2px solid rgba(25, 24, 24, 0.797); height: 10vh; background-color:rgba(32, 31, 31, 0.79); margin-bottom: 10vh; align-items: center; display: flex; justify-content: center;">
@@ -221,8 +231,9 @@
     <div>
         <div style="border: 1px solid black; float: left; height: 76.141689373297vh; width: 15vw;">
             <div>
-                <div style="width: 15vw; display: grid; justify-content: center; height: 6vh; align-items: end;">
-                    <input placeholder="Search Users" class="S" style="width: 12.8vw; height: 4vh; border-radius: 6px; background-color: rgba(31, 31, 31, 0.861); color: rgba(196, 196, 196, 0.9); letter-spacing: 0.5px; border: 1.3px solid rgb(14, 14, 14); font-size: larger; padding-left: 0.5vw; padding-right: 0.5vw;" />
+                <div style="width: 15vw; display: flex; justify-content: left; height: 6vh; align-items: end;">
+                    <input placeholder="Search Users" class="S" style="width: 10.8vw; height: 4vh; border-radius: 6px; background-color: rgba(31, 31, 31, 0.861); color: rgba(196, 196, 196, 0.9); letter-spacing: 0.5px; border: 1.3px solid rgb(14, 14, 14); font-size: larger; padding-left: 0.5vw; padding-right: 0.5vw; margin-left: 2px;" />
+                    <button onclick="osc()" style="cursor: pointer; width: 2vw; height: 4vh; margin-left: 4px; border-radius: 5px; border: 0.5px solid rgba(0, 0, 0, 0.95);" class="SearchButton"><i style="color: rgba(196, 196, 196, 0.9);" class="fa fa-search"></i></button>
                 </div>
                 <div id="UsersContainer" style="overflow-y: auto; height: 70vh; display: flex; flex-direction: column" class="s">
                     <p class="UsernameText" onclick="loc('/messages/{{user}}')">{{user}}</p>

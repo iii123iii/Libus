@@ -7,20 +7,43 @@ from django.contrib.auth.models import User
 from .serializers import PostSerializer
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
+from django.contrib.auth.models import Group
 
 import json
 
 def loginV(request):
     if(request.user.is_authenticated == True):
         return redirect('/')
-    if request.method == "POST" :
-        user = authenticate(request, username = request.POST['username'], password = request.POST['password'])
-        if(user is not None):
-            login(request, user)
-            return redirect("/login")
-
+    if request.method == "POST":
+        conetxt = {}
+        if request.POST['username'].strip() != "" and request.POST['password'].strip() != "":
+            user = authenticate(request, username = request.POST['username'], password = request.POST['password'])
+            if user is not None:
+                if user.groups.filter(name='BANNED').exists() == False:
+                    login(request, user)
+                    return redirect("/")
+                else:
+                    context = {
+                        'error': True,
+                        'e': 'The user you entered is banned.',
+                    }
+            else:
+                context = {
+                    'error': True,
+                    'e': 'The username or password you entered is incorrect. Please try again.',
+                }
+        else:
+            context = {
+                'error': True,
+                'e': 'The username or password you entered is incorrect. Please try again.',
+            }
         
-    return render(request, 'login.html')
+        return render(request, 'login.html', context)
+
+    context = {
+        'error': False,
+    }
+    return render(request, 'login.html', context)
 
 def logoutV(request):
     if(request.user.is_authenticated == True):
@@ -32,14 +55,48 @@ def logoutV(request):
 def registerV(request):
     if(request.user.is_authenticated == True):
         return redirect("/")
+    context = {}
     if(request.method == "POST"):
-        if(User.objects.filter(username = request.POST['username']).exists() == False and User.objects.filter(email = request.POST['email']).exists() == False):
-            user = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
-            user.save()
-            login(request, user)
-            return redirect('/')    
+        if request.POST['username'].strip() != "" and request.POST['email'].strip() != "" and request.POST['password'].strip() != "":
+            if User.objects.filter(username = request.POST['username']).exists() == False:
+                if request.POST['username'].isupper():
+                    if User.objects.filter(email = request.POST['email']).exists() == False:
+                        user = User.objects.create_user(request.POST['username'], request.POST['email'], request.POST['password'])
+                        user.save()
+                        default = Group.objects.get(name='DEFAULT') 
+                        default.user_set.add(user)
+                        login(request, user)
+                        return redirect('/')
+                    else:
+                        context = {
+                        'error': True,
+                        'e': 'The email you selected is not available. Please choose a different one.'
+                        }
+                        return render(request, 'Register.html', context)
+                else:
+                    context = {
+                    'error': True,
+                    'e': 'The username needs to be all upper case.'
+                    }
+                    return render(request, 'Register.html', context)
+            else:
+                context = {
+                    'error': True,
+                    'e': 'The username you selected is not available. Please choose a different one.'
+                }
+                return render(request, 'Register.html', context)
+        else:
+            context = {
+                'error': True,
+                'e': 'The email, username, or password cannot be empty or contain only spaces. Please try again.'
+                }
+            return render(request, 'Register.html', context)
+    context = {
+        'error': False,
+    }
+            
     
-    return render(request, 'Register.html')
+    return render(request, 'Register.html', context)
 
 def HomeV(request):
     if(request.user.is_authenticated == False):
@@ -130,6 +187,8 @@ def delete(request, id):
 def get_users(request, username):
     if(request.user.is_authenticated == False):
         return redirect("/login")
-    users = User.objects.filter(Q(username__icontains=username))
+    users = User.objects.filter(Q(username__startswith=username)).order_by('username')
+    if len(users) > 100:
+        users = users[:99]
     user_list = [{"username": user.username} for user in users]
     return HttpResponse(json.dumps(user_list), content_type="application/json")

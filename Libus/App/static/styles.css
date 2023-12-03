@@ -6,3 +6,11 @@
 .LoginButton:hover{
     background-color: rgb(157, 161, 162);
 }
+
+.SearchButton{
+    background-color: rgba(31, 31, 31, 0.908);
+}
+
+.SearchButton:hover{
+    background-color: rgba(45, 45, 45, 0.861);
+}

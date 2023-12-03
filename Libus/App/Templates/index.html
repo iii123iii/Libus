@@ -45,6 +45,7 @@
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
     <script src="https://unpkg.com/vue@3.2.36/dist/vue.global.prod.js"></script>
+    <link rel="icon" type="image/x-icon" href="/media/Libus.png">
 </head>
 <body style="background-color: rgba(21, 21, 21, 0.86); ">
     {% load filter %}
@@ -160,7 +161,7 @@
                             };
                             let v = false
                             let image = false
-                            if (data.results[i].post_image.endsWith(".png") || data.results[i].post_image.endsWith(".jpg") || data.results[i].post_image.endsWith(".webp")) {
+                            if (data.results[i].post_image.endsWith(".png") || data.results[i].post_image.endsWith(".jpg") || data.results[i].post_image.endsWith(".webp") || data.results[i].post_image.endsWith(".gif")) {
                                 image = true
                             } else if (data.results[i].post_image.endsWith(".mp4") || data.results[i].post_image.endsWith(".mkv") || data.results[i].post_image.endsWith(".mpe") || data.results[i].post_image.endsWith(".mpeg") || data.results[i].post_image.endsWith(".mkv")) {
                                 v = true

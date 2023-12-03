@@ -22,7 +22,12 @@
     <div style="display: grid; justify-content: space-around; align-items: center; font-size: 30px; color: rgba(213, 213, 213, 0.799);">
         <h1>Register</h1>
     </div>
-    <form method="post" action="/register" style="display: grid; justify-content: space-around; padding-top: 80px;">
+    <div style="display: grid; justify-content: space-around; padding-top: 80px;">
+        {% if error %}
+            <h2 style="color: rgb(255, 0, 0, 0.77);">Error: {{e}}</h2>
+        {% endif %}
+    </div>
+    <form method="post" action="/register" style="display: grid; justify-content: space-around;">
         {% csrf_token %}
         <div style="margin-bottom: 15px;">
             <input placeholder="Email" name="email" style="padding: 12px 12px 12px 12px; border-radius: 8px; letter-spacing: 0.5px; font-size: x-large; background-color: rgba(31, 31, 31, 0.861); border-color: rgba(0, 0, 0, 0); color: rgba(196, 196, 196, 0.9);"/>

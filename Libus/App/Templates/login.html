@@ -19,10 +19,21 @@
                 </div>
             </div>
     </div>
+    <!--<div style="display: grid; justify-content: space-around; align-items: center;">
+        <div style="border: 5px solid rgba(206, 14, 0, 0.771); background-color: rgba(206, 14, 0, 0.238); height: auto; width: auto; display: grid; align-content: center; min-height: 60px; min-width: 250px; max-width: 700px; max-height: 60px;">
+            <h4 style="font-size: 36px; padding-left: 1vw;">Error: </h4>
+        </div>
+    </div>-->
     <div style="display: grid; justify-content: space-around; align-items: center; font-size: 30px; color: rgba(213, 213, 213, 0.799);">
         <h1>Login</h1>
     </div>
-    <form method="post" action="/login" style="display: grid; justify-content: space-around; padding-top: 100px;">
+    <div>
+    <div style="display: grid; justify-content: space-around; padding-top: 100px;">
+        {% if error %}
+            <h2 style="color: rgb(255, 0, 0, 0.77);">Error: {{e}}</h2>
+        {% endif %}
+    </div>
+    <form method="post" action="/login" style="display: grid; justify-content: space-around;">
         {% csrf_token %}
         <div style="margin-bottom: 15px;">
             <input placeholder="Username" name="username" style="padding: 12px 12px 12px 12px; border-radius: 8px; letter-spacing: 0.5px; font-size: x-large; background-color: rgba(31, 31, 31, 0.861); border-color: rgba(0, 0, 0, 0); color: rgba(196, 196, 196, 0.9);"/>
