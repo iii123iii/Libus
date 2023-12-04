@@ -169,7 +169,7 @@ def messagesWV(request, username2):
 def posts(request):
     if(request.user.is_authenticated == False):
         return redirect("/login")
-    posts = Post.objects.all()
+    posts = Post.objects.all().order_by('-date_posted')
     paginator = PageNumberPagination()
     paginator.page_size = 10
     results = paginator.paginate_queryset(posts, request)
