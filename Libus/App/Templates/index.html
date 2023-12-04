@@ -147,10 +147,16 @@
                 <div>
                     <div v-if="post.i_a" style="display: flex; margin-top: 3px; margin-bottom: 2px;">
                         <a :href="'/delete/'+post.id"><i class="fa T_I" style="font-size: 35px; cursor: pointer; margin-left: 80px;">&#xf014;</i></a>
-                        <i class="fa fa-thumbs-up c" style="cursor: pointer; font-size: 35px; margin-right: 80px; margin-left: auto;"></i>
+                        <div style="display: flex; justify-content: center; align-items: center; margin-left: auto;">
+                            <span>[[post.likes]]</span>
+                            <i class="fa fa-thumbs-up c" style="cursor: pointer; font-size: 35px; margin-left: 10px; margin-right: 80px;"></i>
+                        </div>
                     </div>
                     <div v-if="post.ina" style="display: flex; flex-direction: column-reverse; margin-top: 3px; margin-bottom: 2px;">
-                        <i class="fa fa-thumbs-up c" style="cursor: pointer; font-size: 35px;"></i>
+                        <div style="display: flex; justify-content: center; align-items: center;">
+                            <span>[[post.likes]]</span>
+                            <i class="fa fa-thumbs-up c" style="cursor: pointer; font-size: 35px; margin-left: 10px;"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -208,6 +214,13 @@
                             } else if (data.results[i].post_image.endsWith(".mp4") || data.results[i].post_image.endsWith(".mkv") || data.results[i].post_image.endsWith(".mpe") || data.results[i].post_image.endsWith(".mpeg") || data.results[i].post_image.endsWith(".mkv")) {
                                 v = true
                             }
+                            like_text = ""
+                            if(data.results[i].likes == 1) {
+                                like_text = `${data.results[i].likes} like`
+                            }else if(data.results[i].likes > 1) {
+                                like_text = `${data.results[i].likes} likes`
+                            }
+                            console.log(like_text)
                             this.posts.push({
                                 id: data.results[i].id,
                                 title: data.results[i].title,
@@ -220,6 +233,7 @@
                                 v: v,
                                 i_a: '{{user}}' == data.results[i].author_username,
                                 ina: '{{user}}' != data.results[i].author_username,
+                                likes: like_text,
                             })
                         }
                     }).catch(error => {
