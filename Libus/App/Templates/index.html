@@ -55,19 +55,44 @@
             90% { -webkit-text-fill-color:rgb(30, 30, 176, 0.8)}
             100% { -webkit-text-fill-color:rgb(30, 30, 176, 0.9)}
         }
+        @keyframes fadeOut {
+            100% { -webkit-text-fill-color: transparent }
+            90% { -webkit-text-fill-color:rgb(127, 127, 180, 0.8)}
+            80% { -webkit-text-fill-color:rgb(103, 10083, 180, 0.8)}
+            70% { -webkit-text-fill-color:rgb(78, 78, 180, 0.8)}
+            60% { -webkit-text-fill-color:rgb(60, 60, 180, 0.8)}
+            50% { -webkit-text-fill-color:rgb(52, 52, 180, 0.8)}
+            40% { -webkit-text-fill-color:rgb(45, 45, 180, 0.8)}
+            30% { -webkit-text-fill-color:rgb(40, 40, 176, 0.8)}
+            20% { -webkit-text-fill-color:rgb(35, 35, 176, 0.8)}
+            10% { -webkit-text-fill-color:rgb(30, 30, 176, 0.8)}
+            0% { -webkit-text-fill-color:rgb(30, 30, 176, 0.9)}
+        }
         .fa.c{
             color: transparent;
             -webkit-text-stroke-width: 2px;
             -webkit-text-stroke-color: rgb(0, 0, 0);
             -webkit-text-fill-color: transparent;
-
-              
           }
+        .fa.cd{
+            color: transparent;
+            -webkit-text-stroke-width: 2px;
+            -webkit-text-stroke-color: rgb(0, 0, 0);
+            -webkit-text-fill-color: transparent;
+            -webkit-text-fill-color:rgb(30, 30, 176, 0.9)
+        }
           .fa.c:hover{
             color: transparent;
             -webkit-text-stroke-width: 2px;
             -webkit-text-stroke-color: rgb(0, 0, 0);
             animation: fadeIn 150ms linear(1.33 51.63%, 0.22 2.1%, 0.86 6.5%, 1.11 8.6%, 1.3 10.7%, 1.35 11.8%, 1.37 12.9%, 1.37 13.7%, 1.36 14.5%, 1.32 16.2%, 1.03 21.8%, 0.94 24%, 0.89 25.9%, 0.88 26.85%, 0.87 27.8%, 0.87 29.25%, 0.88 30.7%, 0.91 32.4%, 0.98 36.4%, 0.38 -18.56%, 1.04 40.5%, 1.05 42.7%, 1.05 44.1%, 0.09 56.16%, 1 53.3%, 0.99 55.4%, 0.98 57.5%, 0.99 60.7%, 1 68.1%, -0.25 155.21%, 1 86.7%, 1 100%);
+            animation-fill-mode: forwards;  
+          }
+          .fa.cd:hover{
+            color: transparent;
+            -webkit-text-stroke-width: 2px;
+            -webkit-text-stroke-color: rgb(0, 0, 0);
+            animation: fadeOut 150ms linear(1.33 51.63%, 0.22 2.1%, 0.86 6.5%, 1.11 8.6%, 1.3 10.7%, 1.35 11.8%, 1.37 12.9%, 1.37 13.7%, 1.36 14.5%, 1.32 16.2%, 1.03 21.8%, 0.94 24%, 0.89 25.9%, 0.88 26.85%, 0.87 27.8%, 0.87 29.25%, 0.88 30.7%, 0.91 32.4%, 0.98 36.4%, 0.38 -18.56%, 1.04 40.5%, 1.05 42.7%, 1.05 44.1%, 0.09 56.16%, 1 53.3%, 0.99 55.4%, 0.98 57.5%, 0.99 60.7%, 1 68.1%, -0.25 155.21%, 1 86.7%, 1 100%);
             animation-fill-mode: forwards;  
           }
          .fa.custom-fa{
@@ -149,7 +174,12 @@
                         <a :href="'/delete/'+post.id"><i class="fa T_I" style="font-size: 35px; cursor: pointer; margin-left: 80px;">&#xf014;</i></a>
                         <div style="display: flex; justify-content: center; align-items: center; margin-left: auto;">
                             <span>[[post.likes]]</span>
-                            <i class="fa fa-thumbs-up c" style="cursor: pointer; font-size: 35px; margin-left: 10px; margin-right: 80px;"></i>
+                            <div v-if="post.has_a_like">
+                                <i class="fa fa-thumbs-up c" style="cursor: pointer; font-size: 35px; margin-left: 10px; margin-right: 80px;"></i>
+                            </div>
+                            <div v-if="post.d">
+                                <i class="fa fa-thumbs-up cd" style="cursor: pointer; font-size: 35px; margin-left: 10px; margin-right: 80px;"></i>
+                            </div>
                         </div>
                     </div>
                     <div v-if="post.ina" style="display: flex; flex-direction: column-reverse; margin-top: 3px; margin-bottom: 2px;">
@@ -198,6 +228,17 @@
                             this.hasNext = true
                         }
                         for (let i = 0; i < data.results.length; i++) {
+                            let has_a_like = false
+                            let d_a_like = true
+                            fetch(`/hasalike/${data.results[i].id}`).then(response => {
+                                return response.text();
+                            }).then(hal => {
+                                if(hal = "True"){
+                                    has_a_like = true
+                                }else{
+                                    d_a_like = false
+                                }
+                            });
                             var d = new Date(data.results[i].date_posted);
                             const options = {
                                 month: 'short',
@@ -220,7 +261,6 @@
                             }else if(data.results[i].likes > 1) {
                                 like_text = `${data.results[i].likes} likes`
                             }
-                            console.log(like_text)
                             this.posts.push({
                                 id: data.results[i].id,
                                 title: data.results[i].title,
@@ -234,6 +274,8 @@
                                 i_a: '{{user}}' == data.results[i].author_username,
                                 ina: '{{user}}' != data.results[i].author_username,
                                 likes: like_text,
+                                has_a_like: has_a_like,
+                                d: d_a_like,
                             })
                         }
                     }).catch(error => {
