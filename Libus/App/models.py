@@ -9,6 +9,7 @@ class Post(models.Model):
     date_posted = models.DateTimeField(default=timezone.now)
     post_image = models.ImageField(upload_to="media", default="/media/Defualt")
     is_image = models.BooleanField(default=False)
+    liked = models.ManyToManyField(User, blank=True, related_name="LikedUsers")
 
     def __str__(self):
         return self.title
