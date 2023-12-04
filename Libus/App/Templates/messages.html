@@ -92,7 +92,7 @@
                     for(i in res) {
                         html = `
                         ${html}
-                        <p class="UsernameText" onclick="loc('/messages/${res[i].username}')">${res[i].username}</p>
+                        <p class="UsernameText" onclick="loc('/messages/${res[i].username}')">@${res[i].username}</p>
                         `
                     }
                     document.querySelector('#UsersContainer').innerHTML = html;
@@ -101,7 +101,7 @@
                 }
             }else {
                 document.querySelector('#UsersContainer').innerHTML = `
-                <p class="UsernameText" onclick="loc('/messages/{{user}}')">{{user}}</p>
+                <p class="UsernameText" onclick="loc('/messages/{{user}}')">@{{user}}</p>
                 `
             }
         } catch (error) {
@@ -237,7 +237,7 @@
                     <button onclick="osc()" style="cursor: pointer; width: 2vw; height: 4vh; margin-left: 4px; border-radius: 5px; border: 0.5px solid rgba(0, 0, 0, 0.95);" class="SearchButton"><i style="color: rgba(196, 196, 196, 0.9);" class="fa fa-search"></i></button>
                 </div>
                 <div id="UsersContainer" style="overflow-y: auto; height: 70vh; display: flex; flex-direction: column" class="s">
-                    <p class="UsernameText" onclick="loc('/messages/{{user}}')">{{user}}</p>
+                    <p class="UsernameText" onclick="loc('/messages/{{user}}')">@{{user}}</p>
                 </div>
             </div>
         </div>
