@@ -23,6 +23,32 @@
         window.addEventListener('load', handleResize);
         
         window.addEventListener('resize', handleResize);
+
+        function like(id, likes){
+            fetch(`like/${id}`).then(response => {
+                return response.text();
+            }).then(data => {
+                if(data == "true"){
+                    document.querySelector(`#l${id}`).className = "fa fa-thumbs-up cd"
+                    document.querySelector(`#l${id}`).setAttribute( "onClick", `like(${id}, ${likes+1})` );
+                    if(likes+1 == 1){
+                        document.querySelector(`#s${id}`).textContent = "1 like"
+                    }else{
+                        document.querySelector(`#s${id}`).textContent = `${likes+1} likes`
+                    }
+                }else{
+                    document.querySelector(`#l${id}`).className = "fa fa-thumbs-up c"
+                    document.querySelector(`#l${id}`).setAttribute( "onClick", `like(${id}, ${likes-1})` );
+                    if(likes-1 == 0){
+                        document.querySelector(`#s${id}`).textContent = ""
+                    }else if(likes-1 == 1){
+                        document.querySelector(`#s${id}`).textContent = "1 like"
+                    }else{
+                        document.querySelector(`#s${id}`).textContent = `${likes-1} likes`
+                    }
+                }
+            })
+        }
         
     </script>
     <link rel="stylesheet" href="../media/styles.css" />
@@ -101,6 +127,31 @@
          color:transparent;
          
          }
+         .pre{
+            page-break-inside: avoid;
+            display: block;
+            padding: 3px 3px 2px;
+            margin: 0 0 10px;
+            font-size: 13px;
+            line-height: 20px;
+            word-break: break-all;
+            word-wrap: break-word;
+            border-radius: 4px;
+            font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .post-content{
+            padding: 3px 3px 2px;
+            margin: 0 0 10px;
+            background-color: rgba(228, 228, 228, 0.794);
+            border: 1px solid #ccc;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            color: #333333;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
     <script src="https://unpkg.com/vue@3.2.36/dist/vue.global.prod.js"></script>
@@ -124,7 +175,7 @@
             </div>
         </div>
     </div>
-    <div class="Q" style="display: grid; justify-content: right;text-align: center;padding-right: 16vw;width: 30%;float: right;position: fixed;margin-left: 700px;margin-bottom: 50px;">            <form action="/create" method="post" enctype="multipart/form-data">
+    <div class="Q" style="display: grid; justify-content: right;text-align: center;padding-right: 16vw;width: 30%;float: right;position: fixed;margin-left: 700px;margin-bottom: 50px; max-height: 800px;">            <form action="/create" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <h1 style="color:rgba(224, 224, 224, 0.87)">Quick post</h1>
                 <div>
@@ -150,19 +201,20 @@
                     </div>
                     <div>
                         <h1 style="padding-left: 5px; font-size: 25px; word-wrap: break-word;">[[post.title]]</h1>
-                        </span>
-                        <p style="word-wrap: break-word;">
-                            [[ post.content ]]
-                        </p>
-                    </div>
-                    <div v-if="post.is_image">
-                        <div v-if="post.i">
-                            <img style="max-width: 380px; max-height: 500px;" :src="post.post_image" />
-                        </div>
-                        <div>
-                            <video v-if="post.v" controls style="max-width: 380px; max-height: 500px;">
-                                <source style="max-width: 380px; max-height: 500px;" :src="post.post_image">
-                            </video>
+                        <div class="post-content">
+                            <div class="pre">
+                                <code>[[ post.content ]]</code>
+                            </div>
+                            <div v-if="post.is_image">
+                                <div v-if="post.i">
+                                    <img style="max-width: 380px; max-height: 500px;" :src="post.post_image" />
+                                </div>
+                                <div>
+                                    <video v-if="post.v" controls style="max-width: 360px; max-height: 500px; border: 0;">
+                                        <source style="max-width: 380px; max-height: 500px; border: 0;" :src="post.post_image">
+                                    </video>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -173,19 +225,25 @@
                     <div v-if="post.i_a" style="display: flex; margin-top: 3px; margin-bottom: 2px;">
                         <a :href="'/delete/'+post.id"><i class="fa T_I" style="font-size: 35px; cursor: pointer; margin-left: 80px;">&#xf014;</i></a>
                         <div style="display: flex; justify-content: center; align-items: center; margin-left: auto;">
-                            <span>[[post.likes]]</span>
+                            <span :id="'s'+post.id">[[post.likes]]</span>
                             <div v-if="post.has_a_like">
-                                <i class="fa fa-thumbs-up c" style="cursor: pointer; font-size: 35px; margin-left: 10px; margin-right: 80px;"></i>
+                                <i class="fa fa-thumbs-up cd" :onclick="'like('+post.id+','+post.likes_count+')'" :id="'l'+post.id" style="cursor: pointer; font-size: 35px; margin-left: 10px; margin-right: 80px;"></i>
                             </div>
                             <div v-if="post.d">
-                                <i class="fa fa-thumbs-up cd" style="cursor: pointer; font-size: 35px; margin-left: 10px; margin-right: 80px;"></i>
+                                <i class="fa fa-thumbs-up c" :onclick="'like('+post.id+','+post.likes_count+')'" :id="'l'+post.id" style="cursor: pointer; font-size: 35px; margin-left: 10px; margin-right: 80px;"></i>
                             </div>
                         </div>
                     </div>
-                    <div v-if="post.ina" style="display: flex; flex-direction: column-reverse; margin-top: 3px; margin-bottom: 2px;">
-                        <div style="display: flex; justify-content: center; align-items: center;">
-                            <span>[[post.likes]]</span>
-                            <i class="fa fa-thumbs-up c" style="cursor: pointer; font-size: 35px; margin-left: 10px;"></i>
+                    <div v-if="post.d_i_a" style="display: flex; margin-top: 3px; margin-bottom: 2px;">
+                       <i class="fa T_I" style="font-size: 35px; cursor: pointer; margin-left: 80px; opacity: 0;">&#xf014;</i>
+                        <div style="display: flex; justify-content: center; align-items: center; margin-left: auto;">
+                            <span :id="'s'+post.id">[[post.likes]]</span>
+                            <div v-if="post.has_a_like">
+                                <i class="fa fa-thumbs-up cd" :onclick="'like('+post.id+','+post.likes_count+')'" :id="'l'+post.id" style="cursor: pointer; font-size: 35px; margin-left: 10px; margin-right: 80px;"></i>
+                            </div>
+                            <div v-if="post.d">
+                                <i class="fa fa-thumbs-up c" :onclick="'like('+post.id+','+post.likes_count+')'" :id="'l'+post.id" style="cursor: pointer; font-size: 35px; margin-left: 10px; margin-right: 80px;"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -213,77 +271,99 @@
                     if (
                         document.documentElement.scrollHeight - window.innerHeight <=
                         window.scrollY + 5 &&
-                        this.hasNext 
-                        ) {
+                        this.hasNext
+                    ) {
                         this.currentPage += 1;
                         this.getPosts();
                     }
                 },
                 getPosts() {
-                    fetch(`/get_posts/?page=${this.currentPage}`).then(response => {
-                        return response.json();
-                    }).then(data => {
-                        this.hasNext = false
-                        if(data.next) {
-                            this.hasNext = true
-                        }
-                        for (let i = 0; i < data.results.length; i++) {
-                            let has_a_like = false
-                            let d_a_like = true
-                            fetch(`/hasalike/${data.results[i].id}`).then(response => {
-                                return response.text();
-                            }).then(hal => {
-                                if(hal = "True"){
-                                    has_a_like = true
-                                }else{
-                                    d_a_like = false
-                                }
+                    fetch(`/get_posts/?page=${this.currentPage}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            this.hasNext = false;
+                            if (data.next) {
+                                this.hasNext = true;
+                            }
+                            const fetchPromises = [];
+                            for (let i = 0; i < data.results.length; i++) {
+                                fetchPromises.push(this.handlePostData(data.results[i]));
+                            }
+                            Promise.all(fetchPromises).then(() => {
+                                this.posts.sort((a, b) => {
+                                    return new Date(b.date_posted) - new Date(a.date_posted);
+                                });
                             });
-                            var d = new Date(data.results[i].date_posted);
-                            const options = {
-                                month: 'short',
-                                day: 'numeric',
-                                year: 'numeric',
-                                hour: 'numeric',
-                                minute: 'numeric',
-                                hour12: true,
-                            };
-                            let v = false
-                            let image = false
-                            if (data.results[i].post_image.endsWith(".png") || data.results[i].post_image.endsWith(".jpg") || data.results[i].post_image.endsWith(".webp") || data.results[i].post_image.endsWith(".gif")) {
-                                image = true
-                            } else if (data.results[i].post_image.endsWith(".mp4") || data.results[i].post_image.endsWith(".mkv") || data.results[i].post_image.endsWith(".mpe") || data.results[i].post_image.endsWith(".mpeg") || data.results[i].post_image.endsWith(".mkv")) {
-                                v = true
-                            }
-                            like_text = ""
-                            if(data.results[i].likes == 1) {
-                                like_text = `${data.results[i].likes} like`
-                            }else if(data.results[i].likes > 1) {
-                                like_text = `${data.results[i].likes} likes`
-                            }
-                            this.posts.push({
-                                id: data.results[i].id,
-                                title: data.results[i].title,
-                                content: data.results[i].content,
-                                author_username: data.results[i].author_username,
-                                date_posted: d.toLocaleString('en-US', options),
-                                post_image: data.results[i].post_image,
-                                is_image: data.results[i].is_image,
-                                i: image,
-                                v: v,
-                                i_a: '{{user}}' == data.results[i].author_username,
-                                ina: '{{user}}' != data.results[i].author_username,
-                                likes: like_text,
-                                has_a_like: has_a_like,
-                                d: d_a_like,
-                            })
-                        }
-                    }).catch(error => {
-                        console.log(error);
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                },
+                handlePostData(postData) {
+                    return new Promise((resolve) => {
+                        let has_a_like = false;
+                        fetch(`/hasalike/${postData.id}`)
+                            .then(response => response.text())
+                            .then(hal => {
+                                if (hal == "true") {
+                                    has_a_like = true;
+                                }
+                                var d = new Date(postData.date_posted);
+                                const options = {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    year: 'numeric',
+                                    hour: 'numeric',
+                                    minute: 'numeric',
+                                    hour12: true,
+                                };
+                                let v = false;
+                                let image = false;
+                                if (
+                                    postData.post_image.endsWith(".png") ||
+                                    postData.post_image.endsWith(".jpg") ||
+                                    postData.post_image.endsWith(".webp") ||
+                                    postData.post_image.endsWith(".gif")
+                                ) {
+                                    image = true;
+                                } else if (
+                                    postData.post_image.endsWith(".mp4") ||
+                                    postData.post_image.endsWith(".mkv") ||
+                                    postData.post_image.endsWith(".mpe") ||
+                                    postData.post_image.endsWith(".mpeg") ||
+                                    postData.post_image.endsWith(".mkv")
+                                ) {
+                                    v = true;
+                                }
+                                like_text = "";
+                                if (postData.likes == 1) {
+                                    like_text = `${postData.likes} like`;
+                                } else if (postData.likes > 1) {
+                                    like_text = `${postData.likes} likes`;
+                                }
+                                this.posts.push({
+                                    id: postData.id,
+                                    title: postData.title,
+                                    content: postData.content,
+                                    author_username: postData.author_username,
+                                    date_posted: d.toLocaleString('en-US', options),
+                                    post_image: postData.post_image,
+                                    is_image: postData.is_image,
+                                    i: image,
+                                    v: v,
+                                    i_a: '{{user}}' == postData.author_username,
+                                    d_i_a: '{{user}}' != postData.author_username,
+                                    likes: like_text,
+                                    has_a_like: has_a_like,
+                                    d: has_a_like != true,
+                                    likes_count: postData.likes,
+                                });
+                                resolve();
+                            });
                     });
-
                 }
             }
+            
         }
 
         Vue.createApp(L).mount('#Posts');

@@ -183,8 +183,8 @@ def HasALike(request, id):
         return redirect("/login")
     post = Post.objects.get(id=id)
     if request.user in post.liked.all():
-        return HttpResponse(True)
-    return HttpResponse(False)
+        return HttpResponse("true")
+    return HttpResponse("talse")
 
 @api_view(['Get'])
 def delete(request, id):
@@ -212,8 +212,7 @@ def like_or_dislike(request, id):
     post = Post.objects.get(id=id)
     if request.user in post.liked.all():
         post.liked.remove(request.user)
+        return HttpResponse('false')
     else:
         post.liked.add(request.user)
-    if post.author.username == request.user.username:
-        post.delete()
-    return HttpResponse("")
+        return HttpResponse('true')

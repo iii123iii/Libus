@@ -15,8 +15,6 @@ class Post(models.Model):
         return self.title
     
     def delete(self, *args, **kwargs):
-        if self.post_image != "/media/Defualt":
-            self.post_image.delete()
         super().delete(*args, **kwargs)
     
     
