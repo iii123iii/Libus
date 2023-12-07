@@ -213,6 +213,11 @@
                                     <video v-if="post.v" controls style="max-width: 360px; max-height: 500px; border: 0;">
                                         <source style="max-width: 380px; max-height: 500px; border: 0;" :src="post.post_image">
                                     </video>
+                                    <audio controls v-if="post.a">
+                                        <source :src="post.post_image" type="audio/mp3">
+                                      Your browser does not support the audio element.
+                                      </audio>
+                                      
                                 </div>
                             </div>
                         </div>
@@ -319,6 +324,7 @@
                                 };
                                 let v = false;
                                 let image = false;
+                                let a = false;
                                 if (
                                     postData.post_image.endsWith(".png") ||
                                     postData.post_image.endsWith(".jpg") ||
@@ -334,6 +340,10 @@
                                     postData.post_image.endsWith(".mkv")
                                 ) {
                                     v = true;
+                                }else if (
+                                    postData.post_image.endsWith(".mp3")
+                                ) {
+                                    a = true;
                                 }
                                 like_text = "";
                                 if (postData.likes == 1) {
@@ -357,6 +367,7 @@
                                     has_a_like: has_a_like,
                                     d: has_a_like != true,
                                     likes_count: postData.likes,
+                                    a: a,
                                 });
                                 resolve();
                             });
