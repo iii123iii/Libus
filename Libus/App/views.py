@@ -184,7 +184,7 @@ def HasALike(request, id):
     post = Post.objects.get(id=id)
     if request.user in post.liked.all():
         return HttpResponse("true")
-    return HttpResponse("talse")
+    return HttpResponse("false")
 
 @api_view(['Get'])
 def delete(request, id):
