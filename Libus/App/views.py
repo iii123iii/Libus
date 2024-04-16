@@ -132,7 +132,7 @@ def messagesV(request):
         }
         return render(request, "messages.html", context)
     else:
-        return redirect('login')
+        return redirect('Login')
     
 def messagesWV(request, username2):
     if request.user.is_authenticated:
@@ -161,7 +161,7 @@ def messagesWV(request, username2):
             }   
         return render(request, "messages.html", context)
     else:
-        return redirect('login')
+        return redirect('Login')
     
     
     
