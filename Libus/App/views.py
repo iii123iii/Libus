@@ -11,6 +11,8 @@ from django.contrib.auth.models import Group
 
 import json
 
+
+
 def loginV(request):
     if(request.user.is_authenticated == True):
         return redirect('/')
@@ -127,9 +129,8 @@ def messagesV(request):
     if request.user.is_authenticated:
         context = {
             'user': request.user,
-            'users' : User.objects.all(),
             'notUser': True,
-        }
+        } 
         return render(request, "messages.html", context)
     else:
         return redirect('Login')
@@ -147,7 +148,6 @@ def messagesWV(request, username2):
                 'messages': Messages.objects.filter((Q(author__username=username2) & Q(user2__username=request.user)) | (Q(author__username=request.user) & Q(user2__username=username2))).order_by('-timestamp'),
                 'user': request.user,
                 'first_id': Messages.objects.filter(Q(author=request.user) | Q(user2=request.user)).order_by('-timestamp').first().id,
-                'users': User.objects.all(),
                 'username2': username2,
                 'host': request.META['HTTP_HOST'],
             }
@@ -155,7 +155,6 @@ def messagesWV(request, username2):
             context = {
                 'messages': Messages.objects.filter((Q(author__username=username2) & Q(user2__username=request.user)) | (Q(author__username=request.user) & Q(user2__username=username2))).order_by('-timestamp'),
                 'user': request.user,
-                'users': User.objects.all(),
                 'username2': username2,
                 'host': request.META['HTTP_HOST'],
             }   

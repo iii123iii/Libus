@@ -1,6 +1,8 @@
 done.txt
 Libus.code-workspace
-/LibusVenv
+/venv
+/Libus/venv
 /Libus/db.sqlite3
 /Libus/nodejs/node_modules
 /Libus/media/media
+**/__pycache__/

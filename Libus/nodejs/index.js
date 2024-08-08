@@ -31,8 +31,6 @@ io.on('connection', (socket) => {
         // Add the current socket to the array for the user ID
         userSocketMap.get(userId).push(socket);
 
-        // Send a welcome message to the registered user
-        socket.emit('message', 'Welcome to the chat!');
     });
 
     // Handle incoming messages

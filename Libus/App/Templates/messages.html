@@ -33,6 +33,18 @@
             }
         }
 
+        function escapeHtml(text) {
+            const map = {
+              '&': '&amp;',
+              '<': '&lt;',
+              '>': '&gt;',
+              '"': '&quot;',
+              "'": '&#039;'
+            };
+        
+            return text.replace(/[&<>"']/g, (m) => map[m]);
+        }
+        
         socket.on('message', (message) => {
             if(message.d == true){
                 if (message.me == "{{user}}") {
@@ -40,7 +52,7 @@
                     ${document.getElementById('m').innerHTML}
                     <div class="message-container">
                         <div class="message-box">
-                            <p class="message-text">${message.message}</p>
+                            <p class="message-text">${escapeHtml(message.message)}</p>
                         </div>
                     </div>
                     `
@@ -49,7 +61,7 @@
                     ${document.getElementById('m').innerHTML}
                     <div class="message-container-green">
                         <div class="message-box-green">
-                            <p class="message-text">${message.message}</p>
+                            <p class="message-text">${escapeHtml(message.message)}</p>
                         </div>
                     </div>
                     `
