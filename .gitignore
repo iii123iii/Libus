@@ -6,3 +6,4 @@ Libus.code-workspace
 /Libus/nodejs/node_modules
 /Libus/media/media
 **/__pycache__/
+.vscode
