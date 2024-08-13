@@ -12,7 +12,8 @@ from Libus.settings import max_media_size
 import random
 import string
 import json
-
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 
 
 def loginV(request):
@@ -61,6 +62,14 @@ def registerV(request):
         return redirect("/")
     context = {}
     if(request.method == "POST"):
+        try:
+            validate_email(request.POST['email'].strip())
+        except ValidationError as e:
+            context = {
+            'error': True,
+            'e': 'You must enter a valid email.'
+            }
+            return render(request, 'Register.html', context)
         if request.POST['username'].strip() != "" and request.POST['email'].strip() != "" and request.POST['password'].strip() != "":
             if User.objects.filter(username = request.POST['username']).exists() == False:
                 if request.POST['username'].isupper():
@@ -240,6 +249,17 @@ def like_or_dislike(request, id):
     else:
         post.liked.add(request.user)
         return HttpResponse('true')
+    
+@api_view(['Get'])
+def settings(request):
+    if(request.user.is_authenticated == False):
+        return redirect("/login")
+    
+    context = {
+        "user": request.user
+    }
+
+    return render(request, 'settings.html', context)
 
 @api_view(['Get'])
 def TEST(request):
