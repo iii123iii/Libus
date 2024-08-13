@@ -19,5 +19,7 @@ urlpatterns = [
     path('hasalike/<int:id>', views.HasALike, name="HasALike"),
     path('like/<int:id>', views.like_or_dislike, name="Like")
 
-
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.DEBUG == True:
+    urlpatterns.append(path('make_ooo', views.TEST, name="TEST"))

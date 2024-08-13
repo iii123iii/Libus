@@ -152,12 +152,16 @@
             border-radius: 4px;
             color: #333333;
         }
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent; /* make scrollbar transparent */
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
     <script src="https://unpkg.com/vue@3.2.36/dist/vue.global.prod.js"></script>
     <link rel="icon" type="image/x-icon" href="/media/Libus.png">
 </head>
-<body style="background-color: rgba(21, 21, 21, 0.86); ">
+<body style="background-color: rgba(21, 21, 21, 0.86); overflow:hidden;">
     <div>
     <div style="border: 2px solid rgba(25, 24, 24, 0.797); height: 10vh; background-color:rgba(32, 31, 31, 0.79); margin-bottom: 10vh; align-items: center; display: flex; justify-content: center;">
         <div style="display: flex; justify-content: space-between; align-items: center; width: 70vw; font-size: 30px; color:rgba(224, 224, 224, 0.87);">
@@ -178,6 +182,8 @@
     <div class="Q" style="display: grid; justify-content: right;text-align: center;padding-right: 16vw;width: 30%;float: right;position: fixed;margin-left: 700px;margin-bottom: 50px; max-height: 800px;">            <form action="/create" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <h1 style="color:rgba(224, 224, 224, 0.87)">Quick post</h1>
+                <h2 style="color: rgb(255, 0, 0, 0.77);">{{CreateError}}
+                </h2>
                 <div>
                     <input name="title" type="text" placeholder="Title" style="padding: 10px 10px 10px 10px; font-size: 20px; letter-spacing: 0.5px; background-color: rgba(24, 24, 24, 0.919); border: 0px; border-radius: 5px; color:rgba(186, 186, 186, 0.821)"/>
                 </div>
@@ -192,7 +198,7 @@
                 </div>
             </form>    
         </div>
-        <div id="Posts" style="display: grid; text-align: center; align-items: center; justify-content: left; padding-left: 200px;">
+        <div id="Posts" style="display: grid; text-align: center; align-items: center; justify-content: left; padding-left: 200px; overflow: scroll; height: 100vh;">
         <div v-for="post in posts" v-bind:key="post.id">
             <div style="border: 0.2px solid rgba(0, 0, 0, 0.445); margin-bottom: 20px; height: auto; width: 400px; margin-left: 20px;  background-color: rgba(211, 224, 223, 0.743);">
                 <div style="width: calc(100% - 20px); margin: 0 auto;">
@@ -205,16 +211,16 @@
                             <div class="pre">
                                 <code>[[ post.content ]]</code>
                             </div>
-                            <div v-if="post.is_image">
+                            <div v-if="post.is_file">
                                 <div v-if="post.i">
-                                    <img style="max-width: 380px; max-height: 500px;" :src="post.post_image" />
+                                    <img style="max-width: 380px; max-height: 500px;" :src="post.post_file" />
                                 </div>
                                 <div>
                                     <video v-if="post.v" controls style="max-width: 360px; max-height: 500px; border: 0;">
-                                        <source style="max-width: 380px; max-height: 500px; border: 0;" :src="post.post_image">
+                                        <source style="max-width: 380px; max-height: 500px; border: 0;" :src="post.post_file">
                                     </video>
                                     <audio controls v-if="post.a">
-                                        <source :src="post.post_image" type="audio/mp3">
+                                        <source :src="post.post_file" type="audio/mp3">
                                       Your browser does not support the audio element.
                                       </audio>
                                       
@@ -259,7 +265,7 @@
     <script>
         const L = {
             data() {
-                return{
+                return {
                     posts: [],
                     currentPage: 1,
                     hasNext: true,
@@ -267,15 +273,16 @@
             },
             delimiters: ['[[', ']]'],
             mounted() {
-                this.getPosts()
-
-                window.addEventListener('scroll', this.handleScroll);
+                this.getPosts();
+    
+                var postElement = document.getElementById('Posts');
+                postElement.addEventListener('scroll', this.handleScroll);
             },
             methods: {
                 handleScroll() {
                     if (
-                        document.documentElement.scrollHeight - window.innerHeight <=
-                        window.scrollY + 5 &&
+                        document.getElementById('Posts').scrollHeight - document.getElementById('Posts').scrollTop <=
+                        document.getElementById('Posts').clientHeight + 5 &&
                         this.hasNext
                     ) {
                         this.currentPage += 1;
@@ -306,78 +313,75 @@
                 },
                 handlePostData(postData) {
                     return new Promise((resolve) => {
-                        let has_a_like = false;
-                        fetch(`/hasalike/${postData.id}`)
-                            .then(response => response.text())
-                            .then(hal => {
-                                if (hal == "true") {
-                                    has_a_like = true;
-                                }
-                                var d = new Date(postData.date_posted);
-                                const options = {
-                                    month: 'short',
-                                    day: 'numeric',
-                                    year: 'numeric',
-                                    hour: 'numeric',
-                                    minute: 'numeric',
-                                    hour12: true,
-                                };
-                                let v = false;
-                                let image = false;
-                                let a = false;
-                                if (
-                                    postData.post_image.endsWith(".png") ||
-                                    postData.post_image.endsWith(".jpg") ||
-                                    postData.post_image.endsWith(".webp") ||
-                                    postData.post_image.endsWith(".gif")
-                                ) {
-                                    image = true;
-                                } else if (
-                                    postData.post_image.endsWith(".mp4") ||
-                                    postData.post_image.endsWith(".mkv") ||
-                                    postData.post_image.endsWith(".mpe") ||
-                                    postData.post_image.endsWith(".mpeg") ||
-                                    postData.post_image.endsWith(".mkv")
-                                ) {
-                                    v = true;
-                                }else if (
-                                    postData.post_image.endsWith(".mp3")
-                                ) {
-                                    a = true;
-                                }
-                                like_text = "";
-                                if (postData.likes == 1) {
-                                    like_text = `${postData.likes} like`;
-                                } else if (postData.likes > 1) {
-                                    like_text = `${postData.likes} likes`;
-                                }
-                                this.posts.push({
-                                    id: postData.id,
-                                    title: postData.title,
-                                    content: postData.content,
-                                    author_username: postData.author_username,
-                                    date_posted: d.toLocaleString('en-US', options),
-                                    post_image: postData.post_image,
-                                    is_image: postData.is_image,
-                                    i: image,
-                                    v: v,
-                                    i_a: '{{user}}' == postData.author_username,
-                                    d_i_a: '{{user}}' != postData.author_username,
-                                    likes: like_text,
-                                    has_a_like: has_a_like,
-                                    d: has_a_like != true,
-                                    likes_count: postData.likes,
-                                    a: a,
-                                });
-                                resolve();
-                            });
+                        var d = new Date(postData.date_posted);
+                        const options = {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                            hour: 'numeric',
+                            minute: 'numeric',
+                            hour12: true,
+                        };
+                        let v = false;
+                        let image = false;
+                        let a = false;
+                        let l_D = false
+                        if (
+                            postData.post_file.endsWith(".png") ||
+                            postData.post_file.endsWith(".jpg") ||
+                            postData.post_file.endsWith(".webp") ||
+                            postData.post_file.endsWith(".gif") ||
+                            postData.post_file.endsWith(".jpeg")
+                        ) {
+                            image = true;
+                        } else if (
+                            postData.post_file.endsWith(".mp4") ||
+                            postData.post_file.endsWith(".mkv") ||
+                            postData.post_file.endsWith(".mpe") ||
+                            postData.post_file.endsWith(".mpeg") ||
+                            postData.post_file.endsWith(".mkv")
+                        ) {
+                            v = true;
+                        } else if (
+                            postData.post_file.endsWith(".mp3")
+                        ) {
+                            a = true;
+                        }
+                        like_text = "";
+                        if (postData.likes == 1) {
+                            like_text = `${postData.likes} like`;
+                        } else if (postData.likes > 1) {
+                            like_text = `${postData.likes} likes`;
+                        }
+                        if(postData.hasalike == true){
+                            l_D = true
+                        }
+                        this.posts.push({
+                            id: postData.id,
+                            title: postData.title,
+                            content: postData.content,
+                            author_username: postData.author_username,
+                            date_posted: d.toLocaleString('en-US', options),
+                            post_file: postData.post_file,
+                            is_file: postData.is_file,
+                            i: image,
+                            v: v,
+                            i_a: '{{user}}' == postData.author_username,
+                            d_i_a: '{{user}}' != postData.author_username,
+                            likes: like_text,
+                            has_a_like: l_D,
+                            d: l_D != true,
+                            likes_count: postData.likes,
+                            a: a,
+                        });
+                        resolve();
                     });
                 }
             }
-            
         }
-
+    
         Vue.createApp(L).mount('#Posts');
     </script>
+    
 </body>
 </html>

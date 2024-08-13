@@ -26,8 +26,10 @@ SECRET_KEY = 'django-insecure-xk!=cz_hh=^+02ntha5p!87wl_ic$-b4h2gd#l^q$w%s+l0p+n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
+# media maximum upload file size
+max_media_size = 20000000
 
 # Application definition
 

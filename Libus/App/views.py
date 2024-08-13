@@ -8,7 +8,9 @@ from .serializers import PostSerializer
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
 from django.contrib.auth.models import Group
-
+from Libus.settings import max_media_size
+import random
+import string
 import json
 
 
@@ -107,22 +109,45 @@ def HomeV(request):
         'user': request.user.username,
     }
     return render(request, 'index.html', context)
-
 def createV(request):
-    if(request.user.is_authenticated == False):
+    if request.user.is_authenticated == False:
         return redirect("/login")
-    
-    if(request.method == "POST"):
-        if(request.FILES):
-            post = Post(title = request.POST['title'], content = request.POST['content'], author = request.user, post_image = request.FILES['file'], is_image = True)
-            post.save()
-            return redirect('/')
+
+    if request.method == "POST":
+        title = request.POST.get('title', '').strip()
+        content = request.POST.get('content', '').strip()
+
+        if title == "":
+            context = {
+                'user': request.user.username,
+                "CreateError": "Title cannot be empty"
+            }
+            return render(request, 'index.html', context)
+
+        if content == "":
+            context = {
+                'user': request.user.username,
+                "CreateError": "Content cannot be empty"
+            }
+            return render(request, 'index.html', context)
+
+        if 'file' in request.FILES:
+            uploaded_file = request.FILES['file']
+            if uploaded_file.size > max_media_size:
+                context = {
+                    'user': request.user.username,
+                    "CreateError": "File cannot be over 20MB"
+                }
+                return render(request, 'index.html', context)
+            post = Post(title=title, content=content, author=request.user, post_file=uploaded_file, is_file=True)
         else:
-            post = Post(title = request.POST['title'], content = request.POST['content'], author = request.user, is_image = False)
-            post.save()
-            return redirect('/')
-            
+            post = Post(title=title, content=content, author=request.user, is_file=False)
+        
+        post.save()
+        return redirect('/')
+
     return render(request, 'create.html')
+
 
 
 def messagesV(request):
@@ -172,7 +197,7 @@ def posts(request):
     paginator = PageNumberPagination()
     paginator.page_size = 10
     results = paginator.paginate_queryset(posts, request)
-    serializer = PostSerializer(results, many=True)
+    serializer = PostSerializer(results, many=True, context={'request': request})
     
     return paginator.get_paginated_response(serializer.data)
 
@@ -215,3 +240,17 @@ def like_or_dislike(request, id):
     else:
         post.liked.add(request.user)
         return HttpResponse('true')
+
+@api_view(['Get'])
+def TEST(request):
+    if(request.user.is_authenticated == False):
+        return redirect("/login")
+
+    letters = string.ascii_lowercase
+    for i in range(1000):
+        result_str = ''.join(random.choice(letters) for i in range(10))
+        result_str2 = ''.join(random.choice(letters) for i in range(random.randint(100, 1000)))
+        post = Post(title = result_str, content = result_str2, author = request.user, is_file = False)
+        post.save()
+    return redirect("/")
+        

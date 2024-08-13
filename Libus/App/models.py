@@ -7,8 +7,8 @@ class Post(models.Model):
     content = models.TextField(max_length=50000)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     date_posted = models.DateTimeField(default=timezone.now)
-    post_image = models.ImageField(upload_to="media", default="/media/Defualt")
-    is_image = models.BooleanField(default=False)
+    post_file = models.ImageField(upload_to="media", default="/media/Defualt")
+    is_file = models.BooleanField(default=False)
     liked = models.ManyToManyField(User, blank=True, related_name="LikedUsers")
 
     def __str__(self):
