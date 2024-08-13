@@ -222,13 +222,13 @@
                                     <audio controls v-if="post.a">
                                         <source :src="post.post_file" type="audio/mp3">
                                       Your browser does not support the audio element.
-                                      </audio>
-                                      
-                                </div>
+                                    </audio>
+                                    
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
                 <div style="border-bottom: 0.1px solid gray;">
                     
                 </div>
@@ -325,7 +325,7 @@
                         let v = false;
                         let image = false;
                         let a = false;
-                        let l_D = false
+                        let l_D = false;
                         if (
                             postData.post_file.endsWith(".png") ||
                             postData.post_file.endsWith(".jpg") ||

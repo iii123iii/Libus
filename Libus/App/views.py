@@ -136,10 +136,10 @@ def createV(request):
             if uploaded_file.size > max_media_size:
                 context = {
                     'user': request.user.username,
-                    "CreateError": "File cannot be over 20MB"
+                    "CreateError": f"File cannot be over {max_media_size/1000000}MB"
                 }
                 return render(request, 'index.html', context)
-            post = Post(title=title, content=content, author=request.user, post_file=uploaded_file, is_file=True)
+            post = Post(title=title, content=content, author=request.user, post_file=uploaded_file, is_file=True, file_name = uploaded_file.name)
         else:
             post = Post(title=title, content=content, author=request.user, is_file=False)
         
