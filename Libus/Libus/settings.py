@@ -29,7 +29,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 # media maximum upload file size
-max_media_size = 200000000
+max_media_size = 80000000
 
 # Application definition
 
