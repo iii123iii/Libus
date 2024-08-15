@@ -216,7 +216,7 @@
                                     <img style="max-width: 380px; max-height: 500px;" :src="post.post_file" />
                                 </div>
                                 <div>
-                                    <video v-if="post.v" controls style="max-width: 360px; max-height: 500px; border: 0;">
+                                    <video v-if="post.v" controls style="max-width: 360px; max-height: 500px; border: 0; border-radius: 20px;">
                                         <source style="max-width: 380px; max-height: 500px; border: 0;" :src="post.post_file">
                                     </video>
                                     <audio controls v-if="post.a">
