@@ -16,7 +16,6 @@ urlpatterns = [
     path('get_posts/', views.posts, name="Posts"),
     path('delete/<int:id>', views.delete, name="DeletePost"),
     path('get_users/<str:username>', views.get_users, name="Users"),
-    path('hasalike/<int:id>', views.HasALike, name="HasALike"),
     path('like/<int:id>', views.like_or_dislike, name="Like"),
     path('settings', views.settings, name="settings")
 

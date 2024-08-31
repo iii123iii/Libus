@@ -14,7 +14,7 @@ import string
 import json
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-
+from django.http import JsonResponse
 
 def loginV(request):
     if(request.user.is_authenticated == True):
@@ -210,14 +210,6 @@ def posts(request):
     
     return paginator.get_paginated_response(serializer.data)
 
-@api_view(['Get'])
-def HasALike(request, id):
-    if(request.user.is_authenticated == False):
-        return redirect("/login")
-    post = Post.objects.get(id=id)
-    if request.user in post.liked.all():
-        return HttpResponse("true")
-    return HttpResponse("false")
 
 @api_view(['Get'])
 def delete(request, id):
@@ -245,10 +237,10 @@ def like_or_dislike(request, id):
     post = Post.objects.get(id=id)
     if request.user in post.liked.all():
         post.liked.remove(request.user)
-        return HttpResponse('false')
+        return JsonResponse({"likes": post.liked.count(), "state": "false"})
     else:
         post.liked.add(request.user)
-        return HttpResponse('true')
+        return JsonResponse({"likes": post.liked.count(), "state": "true"})
     
 @api_view(['Get'])
 def settings(request):

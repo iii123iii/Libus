@@ -165,4 +165,7 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://localhost:3000",
+    "http://192.168.169.186:8000",
 ]
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
